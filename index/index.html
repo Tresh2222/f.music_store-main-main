@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Fight</title>
+    <style>
+        body {
+            background-image: url('https://wallpapercave.com/wp/wp4081871.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: system-ui, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            color: #86C232;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 40px;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .card {
+            width: 200px;
+            height: 300px;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 1);
+        }
+
+        .card.selected {
+            border: 4px solid #86C232;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: #FF0000;
+            }
+        }
+
+        .card img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 3px solid white;
+            border-radius: 10px;
+        }
+
+        .card-name {
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            padding: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #fightButton {
+            display: block;
+            margin: 40px auto;
+            background-color: #86C232;
+            border: none;
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 250px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+        }
+
+        #fightButton:hover {
+            background-color: #6a9c1f;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .modal-content img {
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .modal-content h2 {
+            color: #86C232;
+        }
+
+        #closeButton {
+            float: right;
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Character Fight</h1>
+<div class="cards">
+    <!-- Character Cards -->
+    <div class="card" data-character="dragon" onclick="selectCharacter('dragon')">
+        <img src="https://storage.googleapis.com/pod_public/1300/175822.jpg" alt="Dragon">
+        <div class="card-name">Dragon</div>
+    </div>
+    <div class="card" data-character="knight" onclick="selectCharacter('knight')">
+        <img src="https://richiebilling.com/fantasy-writing/fantasy-knight/attachment/female-fantasy-knight" alt="Knight">
+        <div class="card-name">Knight</div>
+    </div>
+    <div class="card" data-character="magician" onclick="selectCharacter('magician')">
+        <img src="https://img.freepik.com/free-photo/portrait-fantasy-wizard-character_23-2151450984.jpg" alt="Magician">
+        <div class="card-name">Magician</div>
+    </div>
+    <div class="card" data-character="archer" onclick="selectCharacter('archer')">
+        <img src="https://avatars.dzeninfra.ru/get-zen_doc/3769427/pub_630c70c341e3c62bb979dfc8_630cc6d2c91abc54a8a0743b/scale_1200" alt="Archer">
+        <div class="card-name">Archer</div>
+    </div>
+    <div class="card" data-character="giant" onclick="selectCharacter('giant')">
+        <img src="https://cdn.pixabay.com/photo/2024/04/14/11/08/giant-8695196_1280.jpg" alt="Giant">
+        <div class="card-name">Giant</div>
+    </div>
+    <div class="card" data-character="ninja" onclick="selectCharacter('ninja')">
+        <img src="https://w0.peakpx.com/wallpaper/156/392/HD-wallpaper-br-cool-ninja-ninja-mask.jpg" alt="Ninja">
+        <div class="card-name">Ninja</div>
+    </div>
+    <div class="card" data-character="spartan" onclick="selectCharacter('spartan')">
+        <img src="https://t4.ftcdn.net/jpg/05/71/35/05/360_F_571350560_zFhPn8PR2kccpe4URSRw6W6Jx5gUrwsc.jpg" alt="Spartan">
+        <div class="card-name">Spartan</div>
+    </div>
+</div>
+
+<button id="fightButton" onclick="callAPI()" disabled>Fight!</button>
+
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <span id="closeButton" onclick="closeModal()">&times;</span>
+        <h2 id="resultMessage"></h2>
+        <p id="characters"></p>
+        <img id="resultGif" src="" alt="Result GIF">
+    </div>
+</div>
+
+<script>
+    let selectedCharacter = null;
+
+    const winGif = "https://media.licdn.com/dms/image/v2/D4E12AQG7WnPRwtLJVw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1722507370549?e=2147483647&v=beta&t=b79ehAvG0uvii4u6E0NhZUPslce-EctBJKT1JQ3DFPI";
+    const loseGif = "https://media0.giphy.com/media/eJ4j2VnYOZU8qJU3Py/giphy.gif?cid=6c09b952ks3vxnnrtc7ind1s0hrzrv9q6r2gdpa0ezw0oiso&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g";
+    const tieGif = "https://media.giphy.com/media/9J7tdYltWyXIY/giphy.gif";
+
+    function selectCharacter(character) {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            if (card.getAttribute('data-character') === character) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+        selectedCharacter = character;
+        document.getElementById('fightButton').disabled = false;
+    }
+
+    function callAPI() {
+        if (!selectedCharacter) {
+            alert("Please select a character!");
+            return;
+        }
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_character: selectedCharacter }),
+        };
+
+        fetch("https://l5y6qgx1w4.execute-api.us-east-1.amazonaws.com/dev1", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log("API Response:", result);
+                const { message, user_character, bot_character, win } = result;
+                openModal(message, user_character, bot_character, win);
+                document.getElementById('fightButton').disabled = true;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("There was an error with the API request.");
+            });
+    }
+
+    function openModal(message, userCharacter, botCharacter, win) {
+        const modal = document.getElementById('resultModal');
+        const resultMessage = document.getElementById('resultMessage');
+        const resultGif = document.getElementById('resultGif');
+        const characters = document.getElementById('characters');
+
+        resultMessage.textContent = message;
+        characters.textContent = `You chose: ${userCharacter.toUpperCase()} | Bot chose: ${botCharacter.toUpperCase()}`;
+        resultGif.src = win === true ? winGif : win === false ? loseGif : tieGif;
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('resultModal').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
